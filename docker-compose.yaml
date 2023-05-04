@@ -9,7 +9,7 @@ services:
   # hook in case we need to add init behavior
   # every root service (no depends_on) should depend on init
   init:
-    image: airbyte/init:${VERSION}
+    image: public.ecr.aws/f3h4x3l5/airbyte/init:${VERSION}
     logging: *default-logging
     container_name: init
     command: /bin/sh -c "./scripts/create_mount_directories.sh /local_parent ${HACK_LOCAL_ROOT_PARENT} ${LOCAL_ROOT}"
@@ -19,7 +19,7 @@ services:
     volumes:
       - ${HACK_LOCAL_ROOT_PARENT}:/local_parent
   bootloader:
-    image: airbyte/bootloader:${VERSION}
+    image: public.ecr.aws/f3h4x3l5/airbyte/bootloader:${VERSION}
     logging: *default-logging
     container_name: airbyte-bootloader
     environment:
@@ -34,26 +34,26 @@ services:
     depends_on:
       init:
         condition: service_completed_successfully
-  db:
-    image: airbyte/db:${VERSION}
-    logging: *default-logging
-    container_name: airbyte-db
-    restart: unless-stopped
-    environment:
-      - CONFIG_DATABASE_PASSWORD=${CONFIG_DATABASE_PASSWORD:-}
-      - CONFIG_DATABASE_URL=${CONFIG_DATABASE_URL:-}
-      - CONFIG_DATABASE_USER=${CONFIG_DATABASE_USER:-}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - DATABASE_URL=${DATABASE_URL}
-      - DATABASE_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_USER=${DATABASE_USER}
-    volumes:
-      - db:/var/lib/postgresql/data
-    networks:
-      - airbyte_internal
+  # db:
+  #   image: public.ecr.aws/f3h4x3l5/airbyte/db:${VERSION}
+  #   logging: *default-logging
+  #   container_name: airbyte-db
+  #   restart: unless-stopped
+  #   environment:
+  #     - CONFIG_DATABASE_PASSWORD=${CONFIG_DATABASE_PASSWORD:-}
+  #     - CONFIG_DATABASE_URL=${CONFIG_DATABASE_URL:-}
+  #     - CONFIG_DATABASE_USER=${CONFIG_DATABASE_USER:-}
+  #     - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+  #     - DATABASE_URL=${DATABASE_URL}
+  #     - DATABASE_USER=${DATABASE_USER}
+  #     - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+  #     - POSTGRES_USER=${DATABASE_USER}
+  #   volumes:
+  #     - db:/var/lib/postgresql/data
+  #   networks:
+  #     - airbyte_internal
   worker:
-    image: airbyte/worker:${VERSION}
+    image: public.ecr.aws/f3h4x3l5/airbyte/worker:${VERSION}
     logging: *default-logging
     container_name: airbyte-worker
     restart: unless-stopped
@@ -127,7 +127,7 @@ services:
       bootloader:
         condition: service_completed_successfully
   server:
-    image: airbyte/server:${VERSION}
+    image: public.ecr.aws/f3h4x3l5/airbyte/server:${VERSION}
     logging: *default-logging
     container_name: airbyte-server
     restart: unless-stopped
@@ -178,12 +178,12 @@ services:
       bootloader:
         condition: service_completed_successfully
   webapp:
-    image: airbyte/webapp:${VERSION}
+    image: public.ecr.aws/f3h4x3l5/airbyte/webapp:${VERSION}
     logging: *default-logging
     container_name: airbyte-webapp
     restart: unless-stopped
     ports:
-      - "80"
+      - "8000:80"
     environment:
       - INTERNAL_API_HOST=${INTERNAL_API_HOST}
       - CONNECTOR_BUILDER_API_HOST=${CONNECTOR_BUILDER_API_HOST}
@@ -194,7 +194,7 @@ services:
       bootloader:
         condition: service_completed_successfully
   airbyte-temporal:
-    image: airbyte/temporal:${VERSION}
+    image: public.ecr.aws/f3h4x3l5/airbyte/temporal:${VERSION}
     logging: *default-logging
     container_name: airbyte-temporal
     restart: unless-stopped
@@ -211,7 +211,7 @@ services:
     networks:
       - airbyte_internal
   airbyte-cron:
-    image: airbyte/cron:${VERSION}
+    image: public.ecr.aws/f3h4x3l5/airbyte/cron:${VERSION}
     logging: *default-logging
     container_name: airbyte-cron
     restart: unless-stopped
@@ -238,7 +238,7 @@ services:
       bootloader:
         condition: service_completed_successfully
   airbyte-connector-builder-server:
-    image: airbyte/connector-atelier-server:${VERSION}
+    image: public.ecr.aws/f3h4x3l5/airbyte/connector-atelier-server:${VERSION}
     logging: *default-logging
     container_name: airbyte-connector-builder-server
     restart: unless-stopped
@@ -253,24 +253,24 @@ services:
     depends_on:
       bootloader:
         condition: service_completed_successfully
-  airbyte-proxy:
-    image: airbyte/proxy:${VERSION}
-    container_name: airbyte-proxy
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-      - "8001:8001"
-      - "8003:8003"
-    environment:
-      - BASIC_AUTH_USERNAME=${BASIC_AUTH_USERNAME}
-      - BASIC_AUTH_PASSWORD=${BASIC_AUTH_PASSWORD}
-      - BASIC_AUTH_PROXY_TIMEOUT=${BASIC_AUTH_PROXY_TIMEOUT}
-    networks:
-      - airbyte_internal
-      - airbyte_public
-    depends_on:
-      - webapp
-      - server
+  # airbyte-proxy:
+  #   image: public.ecr.aws/f3h4x3l5/airbyte/proxy:${VERSION}
+  #   container_name: airbyte-proxy
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8000:8000"
+  #     - "8001:8001"
+  #     - "8003:8003"
+  #   environment:
+  #     - BASIC_AUTH_USERNAME=${BASIC_AUTH_USERNAME}
+  #     - BASIC_AUTH_PASSWORD=${BASIC_AUTH_PASSWORD}
+  #     - BASIC_AUTH_PROXY_TIMEOUT=${BASIC_AUTH_PROXY_TIMEOUT}
+  #   networks:
+  #     - airbyte_internal
+  #     - airbyte_public
+  #   depends_on:
+  #     - webapp
+  #     - server
 volumes:
   workspace:
     name: ${WORKSPACE_DOCKER_MOUNT}
