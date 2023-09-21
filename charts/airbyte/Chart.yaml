@@ -47,7 +47,7 @@ dependencies:
     version: 0.49.4
   - condition: airbyte-api-server.enabled
     name: airbyte-api-server
-    repository: https://airbytehq.github.io/helm-charts/
+    repository: oci://136939737789.dkr.ecr.eu-west-1.amazonaws.com/charts
     version: 0.49.4
   - condition: worker.enabled
     name: worker
