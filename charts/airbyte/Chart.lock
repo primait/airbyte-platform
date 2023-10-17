@@ -15,7 +15,7 @@ dependencies:
   repository: https://airbytehq.github.io/helm-charts/
   version: 0.49.4
 - name: airbyte-api-server
-  repository: oci://136939737789.dkr.ecr.eu-west-1.amazonaws.com/charts
+  repository: oci://public.ecr.aws/prima/charts
   version: 0.49.4
 - name: worker
   repository: https://airbytehq.github.io/helm-charts/
@@ -38,5 +38,5 @@ dependencies:
 - name: keycloak-setup
   repository: https://airbytehq.github.io/helm-charts/
   version: 0.49.4
-digest: sha256:2c464a25fd59d1dbdb6c3a7085ba6ee2c30d809d3a2526a1de3542d7b4381218
-generated: "2023-10-02T20:25:56.408712787Z"
+digest: sha256:66a33c9f856ba8c53084d0bc42932c9cf12e84d7473782095e0542d8737bf141
+generated: "2023-10-17T10:58:54.505134+02:00"
